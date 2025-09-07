@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_odoo_log_odoo_log,odoo_log.odoo_log,model_odoo_log_odoo_log,base.group_user,1,1,1,1
-access_odoo_product,odoo_log.product,model_odoo_log_product,base.group_user,1,1,1,1
+access_product_user,access.product.user,model_product_product,base.group_user,1,1,1,1
+access_log_user,access.log.user,model_odoo_log_log,base.group_user,1,0,0,0
+access_log_manager,access.log.manager,model_odoo_log_log,base.group_system,1,1,1,1
