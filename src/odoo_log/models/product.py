@@ -2,9 +2,11 @@
 from odoo import models,fields,api
 
 class Product(models.Model):
-    _name = "product.product"
+
     _inherit = "product.product"
 
+    price = fields.Float(string="Mahsulot narxi", required=True)
+    quantity = fields.Integer(string="Mahsulot miqdori", required=True)
 
 
     @api.model_create_multi
@@ -26,47 +28,47 @@ class Product(models.Model):
         old_price = self.price
         old_quantity = self.quantity
 
-        records = super(Product,self).write(vals)
+        rec = super(Product,self).write(vals)
 
-        for record in records:
-            if "name" in record:
-                if old_name != record.name:
-                    self.env["odoo_log.log"].create({
-                        "username":self.env.user.name,
-                        "message":f"{old_name} {record.name} ga o'zgardi "
-                    })
-            if "price" in record:
-                if record.price > float(old_price):
-                    self.env["odoo_log.log"].create({
-                        "username":self.env.user.name,
-                        "message":f"Mahsulot narxi {record.price - old_price} so'mga oshirildi "
-                    })
-                else:
-                    self.env["odoo_log.log"].create({
-                        "username": self.env.user.name,
-                        "message": f"Mahsulot narxi {old_price - record.price} so'mga kamaytirildi "
-                    })
+        for record in self:
+            if old_name != record.name:
+                self.env["odoo_log.log"].create({
+                    "username": self.env.user.name,
+                    "message": f"{old_name} {record.name} ga o'zgardi "
+                })
 
-            if "quantity" in record:
-                if record.quantity > old_quantity:
-                    sum = record.quantity + old_quantity
-                    self.env["odoo_log.log"].create({
-                        "username": self.env.user.name,
-                        "message": f"Mahsulot qiymati {record.quantity} oshirildi. Jami miqdori {sum}"
-                    })
-                elif record.quantity < float(old_quantity):
-                    sum = old_quantity - record.quantity
-                    self.env["odoo_log.log"].create({
-                        "username": self.env.user.name,
-                        "message": f"Mahsulot qiymati {record.quantity} kamaytirildi. Jami miqdori {sum}"
-                    })
+            if record.price > float(old_price):
+                self.env["odoo_log.log"].create({
+                    "username":self.env.user.name,
+                    "message":f"Mahsulot narxi {record.price - old_price} so'mga oshirildi "
+                })
+            else:
+                self.env["odoo_log.log"].create({
+                    "username": self.env.user.name,
+                    "message": f"Mahsulot narxi {old_price - record.price} so'mga kamaytirildi "
+                })
 
-                else:
-                    self.env["odoo_log.log"].create({
+            if record.quantity > old_quantity:
+                sum = record.quantity + old_quantity
+                self.env["odoo_log.log"].create({
+                    "username": self.env.user.name,
+                    "message": f"Mahsulot qiymati {record.quantity} oshirildi. Jami miqdori {sum}"
+                })
+
+
+            elif record.quantity < old_quantity:
+                sum = old_quantity - record.quantity
+                self.env["odoo_log.log"].create({
+                    "username": self.env.user.name,
+                    "message": f"Mahsulot qiymati {record.quantity} kamaytirildi. Jami miqdori {sum}"
+                })
+
+            else:
+                self.env["odoo_log.log"].create({
                         "username": self.env.user.name,
                         "message": f"Mahsulot qiymati o'zgarmadi"
                     })
-        return records
+        return rec
 
     def unlink(self):
         for record in self:
